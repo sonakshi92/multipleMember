@@ -16,6 +16,7 @@ $parent = mysqli_query($conn, "select * from form");
 </head>
 <body>
     <div class="container">
+    <a href="index.php" class="remove-btn btn btn-success ">Add Head and Members</a>
 <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -32,10 +33,10 @@ $parent = mysqli_query($conn, "select * from form");
      <?php while ($rowResult =  mysqli_fetch_assoc($parent)){
         $parentId = $rowResult['id']; 
         ?><tr>
-<form action="" method="POST">
+        <form action="action.php" method="POST">
        <div class="form-group"> 
             <td>
-                <input type="hidden" class="form-control" name="name"  value="<?php echo $rowResult['id'] ?>">
+                <input type="hidden" class="form-control" name="form_id"  value="<?php echo $rowResult['id'] ?>">
                 <input type="text" class="form-control" name="name"  value="<?php echo $rowResult['name'] ?>">
             </td>
         </div>
@@ -55,11 +56,11 @@ $parent = mysqli_query($conn, "select * from form");
                     while ($child = mysqli_fetch_assoc($childs))
                 {
                     if($parentId == $child['form_id']){?>
-                    <input type="text"  class="form-control" name="id_mem[]"  value="<?php echo $child['id_mem']?>">
+                     <input type="hidden" class="form-control" name="member_id"  value="<?php echo $child['id'] ?>">
+                    <input type="text"  class="form-control" name="id_mem"  value="<?php echo $child['id_mem']?>">
                 <?php    }
                 } ?>
         </td>
-        <div class="display"></div>
         </div>
     <td>
         <?php 
@@ -68,18 +69,21 @@ $parent = mysqli_query($conn, "select * from form");
                 {
                     if($parentId == $child['form_id']){?>
              <div class="input-group"> 
-                   <input type="text" class="form-control" name="name_mem[]"  value="<?php echo $child['name_mem']?>">
-                   <span class="input-group-addon"><i class="btn btn-sm btn-danger glyphicon glyphicon-trash"></i></span>
+                   <input type="text" class="form-control" name="name_mem"  value="<?php echo $child['name_mem']?>">
+                   <span class="input-group-addon"><i class=""></i>
+                   <input type="submit" class="btn btn-sm btn-danger" name="deleteChild" value="Delete">
+                   <input type="submit" class="btn btn-sm btn-success" name="updateChild" value="Update">
+                  </span>
             </div>
                 <?php    }
-                }
-            
-            
-        ?>
+                    }
+                ?>
+    <div class="display<?php echo $parentId?>"></div>
     </td>
     <td>
-        <input type="button" id="add_<?php echo $rows['id'];?>" onClick="addMem(<?php echo $parentId ?>)" class="btn btn-primary" value="Add Members">
-        <input type="button" id="update_<?php echo $rows['id'];?>?>" class="btn btn-success" value="Update">
+        <input type="button"  onClick="addMem(<?php echo $parentId ?>)" class="btn btn-primary" value="Add Members">
+        <input type="submit" class="btn btn-danger" name="delete" value="Delete">
+        <input type="submit" class="btn btn-warning" name="updateParent" value="update Parent">
     </td>
     </tr>
 </form>
@@ -94,15 +98,17 @@ $parent = mysqli_query($conn, "select * from form");
           $(this).closest('.main-form').remove();
       });
     });
-  function addMem($id){
-      alert($id);
-    $('#display').append(
-            '<div class="main-form">\
-            <input type="text" name="name_mem[]"  required placeholder="Enter Member Name">\
-            <input type="text" name="id_mem[]" required placeholder="Member ID">\
-            <button type="button" class="remove-btn btn btn-sm btn-danger ">Remove</button>\
-            </div>'
-          );
+  function addMem(id){
+    //   alert(id);
+    $('.display'+id).append(
+        '<div class="main-form"><form action="action.php" method=POST>\
+        <input type="text" name="name_mem"  required placeholder="Enter Member Name">\
+        <input type="hidden" name="form_id" value="'+id+'">\
+        <button type="button" class="remove-btn btn btn-sm btn-danger ">Remove</button>\
+       <input type="text" name="id_mem" required placeholder="Member ID">\
+       <input type="submit" class="btn btn-primary" name="addChild" value="Add">\
+       </form></div>'
+        );
   }
 </script>
 </body>
